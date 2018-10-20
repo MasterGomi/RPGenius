@@ -8,32 +8,8 @@ namespace RPGenius
 {
     class Player : Entity
     {
-        private int _baseHp = 0;    //all base stats are initialised to 0 as some stats may not be in use based on game settings
-        private int _baseAtk = 0;
-        private int _baseDef = 0;
         //
-        public override int BaseHp
-        {
-            get { return _baseHp; }
-        }
-        public override int BaseAtk
-        {
-            get { return _baseAtk; }
-        }
-        public override int BaseDef
-        {
-            get { return _baseDef; }
-        }
-        //
-        public Player(string name, int turnOrder, int hp, int atk, int def) : base(name, turnOrder)
-        {
-            _baseHp = hp;
-            HP = hp;
-            _baseAtk = atk;
-            ATK = atk;
-            _baseDef = def;
-            DEF = def;
-        }
+        public Player(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0) : base(name, turnOrder, hp, atk, def, mp, mag, spr) { }
         //
         public override void ExecuteTurn(Battle battle)
         {
@@ -43,9 +19,13 @@ namespace RPGenius
             Console.WriteLine("What will {0} do?\t\tHP: {1}/{2}", Name, HP, BaseHp);
             do
             {
-                Console.WriteLine("1. Attack\t2. Defend");
+                Console.Write("1. Attack\t2. Defend");
+                if(Skills.Count != 0) { Console.Write("\t3. Skills"); }
+                Console.WriteLine("");
                 Console.Write("\t=>  ");
-                choice = ExSys.ReadIntRange(1, 2);
+                int upperLimit = 2;
+                if(Skills.Count != 0) { upperLimit++; }
+                choice = ExSys.ReadIntRange(1, upperLimit);
                 Console.WriteLine("");
                 switch (choice)
                 {
@@ -68,9 +48,73 @@ namespace RPGenius
                         Console.WriteLine("> {0} defends", Name);
                         Console.WriteLine("");
                         break;
+                    case 3:
+                        Console.WriteLine("Which skill would you like to use?");
+                        int skillsIterate = 1;
+                        foreach (Skill s in Skills)
+                        {
+                            Console.WriteLine("{0}. {1}", skillsIterate, s.Name);   // eg:  1. Heavy slash
+                            skillsIterate++;
+                        }
+                        Console.WriteLine("{0}. [back]",skillsIterate);
+                        Console.Write("\t=>  ");
+                        choice = ExSys.ReadIntRange(1, skillsIterate);
+                        if (choice != skillsIterate) { choice = ChooseSkillTarget(Skills[choice - 1], battle); }
+                        else { choice = 0; }
+                        break;
                 }
             } while (choice == 0);
         }
-        
+        /// <summary>
+        /// Determines (using user input) which target is to be used by the skill
+        /// </summary>
+        /// <param name="s">The skill that needs a target</param>
+        /// <param name="battle">The current Battle object</param>
+        /// <returns>Returns 1 after succesful execution. Returns 0 if player chooses [back]. returns NULL if TargetOptions isn't playing nice</returns>
+        private int ChooseSkillTarget(Skill s, Battle battle)
+        {
+            int choice;
+            switch (s.TargetOptions)
+            {
+                case Skill.SkillTarget.TargetOneEnemy:
+                    Console.WriteLine("Who would you like to target?");
+                    int enemyIterate = 1;
+                    foreach (Enemy e in battle.Enemies)
+                    {
+                        Console.WriteLine("{0}. {1}\t{2}/{3} HP", enemyIterate, e.Name, e.HP, e.BaseHp);   // eg:  1. Goblin   45/50 HP
+                        enemyIterate++;
+                    }
+                    Console.WriteLine("{0}. [back]", enemyIterate);
+                    Console.Write("\t=>  ");
+                    choice = ExSys.ReadIntRange(1, enemyIterate);
+                    if(choice == enemyIterate) { return 0; }
+                    UseSkill(battle, s, battle.Enemies[choice - 1]);
+                    return 1;
+                case Skill.SkillTarget.TargetAllEnemies:
+                    UseSkill(battle, s);
+                    return 1;
+                case Skill.SkillTarget.TargetOnePlayer:
+                    Console.WriteLine("Who would you like to target?");
+                    int playerIterate = 1;
+                    foreach (Player p in battle.Players)
+                    {
+                        Console.WriteLine("{0}. {1}\t{2}/{3} HP", playerIterate, p.Name, p.HP, p.BaseHp);   // eg:  1. Jack   45/50 HP
+                        playerIterate++;
+                    }
+                    Console.WriteLine("{0}. [back]", playerIterate);
+                    Console.Write("\t=>  ");
+                    choice = ExSys.ReadIntRange(1, playerIterate);
+                    if (choice == playerIterate) { return 0; }
+                    UseSkill(battle, s, battle.Players[choice - 1]);
+                    return 1;
+                case Skill.SkillTarget.TargetAllPlayers:
+                    UseSkill(battle, s);
+                    return 1;
+                case Skill.SkillTarget.TargetSelf:
+                    UseSkill(battle, s, this);
+                    return 1;
+                default: throw new NullReferenceException();
+            }
+        }
     }
 }

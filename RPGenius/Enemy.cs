@@ -9,40 +9,15 @@ namespace RPGenius
 {
     class Enemy : Entity
     {
-        private int _baseHp = 0;    //all base stats are initialised to 0 as some stats may not be in use based on game settings
-        private int _baseAtk = 0;
-        private int _baseDef = 0;
         //private Player _lastAttackedBy; //consider using something like this to increase complexity of enemy target selection
-        //
-        public override int BaseHp
-        {
-            get { return _baseHp; }
-        }
-        public override int BaseAtk
-        {
-            get { return _baseAtk; }
-        }
-        public override int BaseDef
-        {
-            get { return _baseDef; }
-        }
-        //
-        public Enemy(string name, int turnOrder, int hp, int atk, int def) : base(name, turnOrder)
-        {
-            _baseHp = hp;
-            HP = hp;
-            _baseAtk = atk;
-            ATK = atk;
-            _baseDef = def;
-            DEF = def;
-        }
+        public Enemy(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0) : base(name, turnOrder, hp, atk, def, mp, mag, spr) { }
         //
         public override void ExecuteTurn(Battle battle)
         {
             Thread.Sleep(2000);
             IsDefending = false;
             Random rnd = new Random();
-            int attackChance = HP / _baseHp * 100;     //Chance of attack is higher if health is higher. (represented as an integer percentage)
+            int attackChance = HP / BaseHp * 100;     //Chance of attack is higher if health is higher. (represented as an integer percentage)
             if(attackChance > 90) { attackChance = 90; }    //This statement ensures the chance of defense is always at least 10%
             else { if(attackChance > 70) { attackChance = 80; } }   // This statement is a fun flavour statment, this means that when the enemy is between 70% and 90% of their health, they'll have an 80% chance of attacking
             if(attackChance < 50) { attackChance = 40; }    //this statement means that as soon as the enemy drops below 50% health, they will always have only a 40% chance of attacking
