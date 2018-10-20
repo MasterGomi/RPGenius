@@ -16,7 +16,7 @@ namespace RPGenius
             IsDefending = false;
             int choice;
             Console.WriteLine("");
-            Console.WriteLine("What will {0} do?\t\tHP: {1}/{2}", Name, HP, BaseHp);
+            Console.WriteLine("What will {0} do?\t\tHP: {1}/{2}  MP: {3}/{4}", Name, HP, BaseHp, MP, BaseMp);
             do
             {
                 Console.Write("1. Attack\t2. Defend");
@@ -53,13 +53,24 @@ namespace RPGenius
                         int skillsIterate = 1;
                         foreach (Skill s in Skills)
                         {
-                            Console.WriteLine("{0}. {1}", skillsIterate, s.Name);   // eg:  1. Heavy slash
+                            Console.WriteLine("{0}. {1}\tMP cost: {2}", skillsIterate, s.Name, s.MPCost);   // eg:  1. Heavy slash    MP cost: 10
                             skillsIterate++;
                         }
                         Console.WriteLine("{0}. [back]",skillsIterate);
                         Console.Write("\t=>  ");
                         choice = ExSys.ReadIntRange(1, skillsIterate);
-                        if (choice != skillsIterate) { choice = ChooseSkillTarget(Skills[choice - 1], battle); }
+                        if (choice != skillsIterate)
+                        {
+                            if (Skills[choice - 1].MPCost > MP)
+                            {
+                                Console.WriteLine("You don't have enough MP to use {0}", Skills[choice - 1].Name);
+                                choice = 0;
+                            }
+                            else
+                            {
+                                choice = ChooseSkillTarget(Skills[choice - 1], battle);
+                            }
+                        }
                         else { choice = 0; }
                         break;
                 }

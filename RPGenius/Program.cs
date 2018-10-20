@@ -12,10 +12,10 @@ namespace RPGenius
         {
             Battle battle = new Battle();
             Sword ironSword = new Sword("Iron Sword", 10, 5);
-            PhysSkill heavySlash = new PhysSkill("Heavy Slash", Skill.SkillTarget.TargetOneEnemy, 20, 10, 20);
-            PhysSkill spinSlash = new PhysSkill("Spin Slash", Skill.SkillTarget.TargetAllEnemies, 17, 18, 50, false);
-            MagSkill fireBall = new MagSkill("Fire Ball", Skill.SkillTarget.TargetOneEnemy, 25, 20, 10);
-            MagSkill blizzard = new MagSkill("Blizzard", Skill.SkillTarget.TargetAllEnemies, 20, 40, 50, true);
+            PhysSkill heavySlash = new PhysSkill("Heavy Slash", Skill.SkillTarget.TargetOneEnemy, 27, 10, 20);
+            PhysSkill spinSlash = new PhysSkill("Spin Slash", Skill.SkillTarget.TargetAllEnemies, 23, 18, 40, false);
+            MagSkill fireBall = new MagSkill("Fire Ball", Skill.SkillTarget.TargetOneEnemy, 30, 20, 10);
+            MagSkill blizzard = new MagSkill("Blizzard", Skill.SkillTarget.TargetAllEnemies, 27, 40, 10, true);
             Player testMan = new Player("Jack", 3, 150, 12, 7, 50, 10, 13);
             Player testman2 = new Player("Dan", 2, 160, 11, 8, 65, 15, 14);
             Enemy goblin1 = new Enemy("Goblin 1", 7, 45, 5, 3, 20, 3, 1);
