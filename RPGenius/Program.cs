@@ -37,10 +37,4 @@ namespace RPGenius
             battle.Start();
         }
     }
-    public enum StatsSet
-    {
-        basic = 1,
-        advanced,
-        complex
-    }
 }

@@ -248,6 +248,12 @@ namespace RPGenius
                 if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
                 target.HP -= damage;
                 Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP now {4}/{5}", Name, s.Name, target.Name, damage, target.HP, target.BaseHp);  //eg: Jack's Heavy Slash hits Goblin for 45 damage. Goblin's HP now 5/50
+                if (target.HP == 0)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("{0} has been defeated!", target.Name);
+                    battle.RemoveEntity(target);
+                }
                 return;
             }
             if (s.GetType() == typeof(MagSkill) && target != null)  //this handles *all* single target magic attacks
@@ -256,8 +262,15 @@ namespace RPGenius
                 if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
                 target.HP -= damage;
                 Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP now {4}/{5}", Name, s.Name, target.Name, damage, target.HP, target.BaseHp);  //eg: Jack's Heavy Slash hits Goblin for 45 damage. Goblin's HP now 5/50
+                if (target.HP == 0)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("{0} has been defeated!", target.Name);
+                    battle.RemoveEntity(target);
+                }
                 return;
             }
+            List<Entity> deaths = new List<Entity>();
             /*single target buffs/debuffs*/
             if (s.GetType() == typeof(PhysSkill))
             {
@@ -280,6 +293,7 @@ namespace RPGenius
                         damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - e.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
                         if (e.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
                         e.HP -= damage;
+                        if(e.HP == 0) { deaths.Add(e); }
                         Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
                         Thread.Sleep(700);
                         enemyIterate++;
@@ -304,6 +318,7 @@ namespace RPGenius
                         damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - p.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
                         if (p.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
                         p.HP -= damage;
+                        if(p.HP == 0) { deaths.Add(p); }
                         Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
                         Thread.Sleep(700);
                         playerIterate++;
@@ -331,6 +346,7 @@ namespace RPGenius
                         damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - e.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
                         if (e.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
                         e.HP -= damage;
+                        if(e.HP == 0) { deaths.Add(e); }
                         Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
                         Thread.Sleep(700);
                         enemyIterate++;
@@ -355,6 +371,7 @@ namespace RPGenius
                         damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - p.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
                         if (p.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
                         p.HP -= damage;
+                        if(p.HP == 0) { deaths.Add(p); }
                         Console.WriteLine("{0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
                         Thread.Sleep(700);
                         playerIterate++;
@@ -364,6 +381,14 @@ namespace RPGenius
             else /*(buff/debuff)*/
             {
                 throw new NotImplementedException();
+            }
+            Console.WriteLine("");
+            if(deaths.Count != 0) { Thread.Sleep(1000); }
+            foreach (Entity e in deaths)
+            {
+                Thread.Sleep(500);
+                Console.WriteLine("{0} has been defeated!", e.Name);
+                battle.RemoveEntity(e);
             }
         }
     }

@@ -20,6 +20,26 @@ namespace RPGenius
             TargetAllPlayers,
             TargetSelf
         }
+        public enum StatusEffect
+        {
+            none,
+            poison,     //saps HP at end of turn
+            burn,       //saps HP at end of turn (more Hp, shorter lifespan than poison)
+            freeze,     //skips turn
+            stun,       //forces entity to move last, increases miss chances
+            fear,       //unlikely to attack, (players will defend if they choose attack but fear passes the check), may cause enemies to run from battle
+            confusion   //may attack themselves or friendly targets instead
+        }
+        public enum StatChange  //enum to be used for debuffs and buffs
+        {
+            none,
+            ATK,
+            DEF,
+            MAG,
+            SPR,
+            /*add all stats*/
+            TurnOrder
+        }
         public int ATK { get => _atk; }
         public int MAG { get => _mag; }
         public int MPCost { get; }
