@@ -421,26 +421,38 @@ namespace RPGenius
                     return;
                 case Skill.StatusEffect.poison:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 3);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} has been poisoned", target.Name);
                     break;
                 case Skill.StatusEffect.burn:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} has been burned", target.Name);
                     break;
                 case Skill.StatusEffect.freeze:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} has been encased in ice", target.Name);
                     break;
                 case Skill.StatusEffect.stun:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 2);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} is seeing stars", target.Name);
                     break;
                 case Skill.StatusEffect.confusion:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 4);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} doesn't know right from left", target.Name);
                     break;
                 case Skill.StatusEffect.fear:
                     target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} is afraid for their life", target.Name);
                     break;
                 default:
@@ -467,6 +479,8 @@ namespace RPGenius
                     damage = damageMod + rnd.Next(-varience, varience);
                     if (HP - damage < 1) { HP = 1; }
                     else { HP -= damage; }
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} takes {1} damage from poison. HP now {2}/{3}", Name, damage, HP, BaseHp);
                     if(EffectDurationRemaining <= 0)
                     {
@@ -480,6 +494,8 @@ namespace RPGenius
                     else /*heavy*/ { damageMod = 117; varience = 23; }                                              // 94-140 damage
                     damage = damageMod + rnd.Next(-varience, varience);
                     HP -= damage;
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     Console.WriteLine("{0} takes {1} damage from . HP now {2}/{3}", Name, damage, HP, BaseHp);
                     if (EffectDurationRemaining <= 0)
                     {
@@ -488,24 +504,30 @@ namespace RPGenius
                     }
                     break;
                 case Skill.StatusEffect.freeze:
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     if (EffectDurationRemaining > 0) { Console.WriteLine("{0} is frozen in place", Name); }
                     else { Console.WriteLine("{0} is no longer frozen", Name); }
                     break;
                 case Skill.StatusEffect.stun:
+                    Thread.Sleep(400);
+                    Console.WriteLine("");
                     if (EffectDurationRemaining > 0) { Console.WriteLine("{0} is still feeling dizzy", Name); }
                     else { Console.WriteLine("{0} is no longer stunned", Name); }
                     break;
                 case Skill.StatusEffect.fear:
                     if (EffectDurationRemaining <= 0)
                     {
-                        Thread.Sleep(700);
+                        Thread.Sleep(400);
+                        Console.WriteLine("");
                         Console.WriteLine("{0} is no longer afraid", Name);
                     }
                     break;
                 case Skill.StatusEffect.confusion:
                     if (EffectDurationRemaining <= 0)
                     {
-                        Thread.Sleep(700);
+                        Thread.Sleep(400);
+                        Console.WriteLine("");
                         Console.WriteLine("{0} is no longer confused", Name);
                     }
                     break;

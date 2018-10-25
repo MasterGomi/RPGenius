@@ -11,9 +11,9 @@ namespace RPGenius
     {
         private List<Entity> _turnOrder = new List<Entity>();
         //
-        public int EntityCount { get; set; }
-        public int PlayerCount { get; set; }
-        public int EnemyCount { get; set; }
+        public int EntityCount { get { return Players.Count + Enemies.Count; } }
+        public int PlayerCount { get { return Players.Count; } }
+        public int EnemyCount { get { return Enemies.Count; } }
         public Dictionary<Entity, int> EntityReg = new Dictionary<Entity, int>();   // to represent static entities attached to a changing number (turn order number)
         public List<Player> Players = new List<Player>();   // a collection of all player entities
         public List<Enemy> Enemies = new List<Enemy>();     // a collection of all enemy entities
@@ -25,17 +25,8 @@ namespace RPGenius
         /// <param name="e">The entity to be added</param>
         public void AddEntity(Entity e)
         {
-            EntityCount++;
-            if(e.GetType() == typeof(Enemy))
-            {
-                EnemyCount++;
-                Enemies.Add(e as Enemy);
-            }
-            else
-            {
-                PlayerCount++;
-                Players.Add(e as Player);
-            }
+            if (e.GetType() == typeof(Enemy)) { Enemies.Add(e as Enemy); }
+            else { Players.Add(e as Player); }
             EntityReg.Add(e, e.TurnOrder);
         }
         /// <summary>
@@ -44,17 +35,8 @@ namespace RPGenius
         /// <param name="e">The entity to be removed</param>
         public void RemoveEntity(Entity e)
         {
-            EntityCount--;
-            if (e.GetType() == typeof(Enemy))
-            {
-                EnemyCount--;
-                Enemies.Remove(e as Enemy);
-            }
-            else
-            {
-                PlayerCount--;
-                Players.Remove(e as Player);
-            }
+            if (e.GetType() == typeof(Enemy)) { Enemies.Remove(e as Enemy); }
+            else { Players.Remove(e as Player); }
             EntityReg.Remove(e);
         }
         public void Start()
