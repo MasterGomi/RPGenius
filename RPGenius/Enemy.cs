@@ -15,7 +15,7 @@ namespace RPGenius
         public override void ExecuteTurn(Battle battle)
         {
             Thread.Sleep(2000);
-            EffectHandler();
+            if (StatusEffect == Skill.StatusEffect.burn || StatusEffect == Skill.StatusEffect.freeze) { EffectHandler(); }
             IsDefending = false;
             Random rnd = new Random();
             int attackChance = HP / BaseHp * 100;     //Chance of attack is higher if health is higher. (represented as an integer percentage)
@@ -26,40 +26,46 @@ namespace RPGenius
             if (choice <= attackChance)
             {
                 int target;
-                if(Skills.Count == 0)
+                if (Skills.Count == 0)
                 {
                     target = rnd.Next(1, battle.PlayerCount + 1);   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
                     Attack(battle.Players[target - 1], battle);  //If the random number isn't high enough to trump the chance of attacking, the enemy will attack
-                    return;
                 }
-                int skillChance = 25;
-                if (rnd.Next(1, 100) <= skillChance)
+                else
                 {
-                    Skill skillChoice1 = Skills[rnd.Next(1, Skills.Count) - 1];
-                    if(skillChoice1.MPCost <= MP)
+                    int skillChance = /*25*/ 100;
+                    if (rnd.Next(1, 100) <= skillChance)
                     {
-                        if(skillChoice1.TargetOptions == Skill.SkillTarget.TargetAllEnemies) { UseSkill(battle, skillChoice1); }
+                        Skill skillChoice1 = Skills[rnd.Next(1, Skills.Count) - 1];
+                        if (skillChoice1.MPCost <= MP)
+                        {
+                            if (skillChoice1.TargetOptions == Skill.SkillTarget.TargetAllEnemies) { UseSkill(battle, skillChoice1); }
+                            else
+                            {
+                                Player targetPlayer = battle.Players[rnd.Next(1, battle.PlayerCount + 1) - 1];   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
+                                UseSkill(battle, skillChoice1, targetPlayer);
+                            }
+                        }
                         else
                         {
-                            Player targetPlayer = battle.Players[rnd.Next(1, battle.PlayerCount + 1) - 1];   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
-                            UseSkill(battle, skillChoice1, targetPlayer);
-                            return;
+                            Skill skillChoice2 = Skills[rnd.Next(1, Skills.Count) - 1];
+                            if (skillChoice2.MPCost <= MP)
+                            {
+                                if (skillChoice2.TargetOptions == Skill.SkillTarget.TargetAllEnemies) { UseSkill(battle, skillChoice2); }
+                                else
+                                {
+                                    Player targetPlayer = battle.Players[rnd.Next(1, battle.PlayerCount + 1) - 1];   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
+                                    UseSkill(battle, skillChoice2, targetPlayer);
+                                }
+                            }
                         }
                     }
-                    Skill skillChoice2 = Skills[rnd.Next(1, Skills.Count) - 1];
-                    if (skillChoice2.MPCost <= MP)
+                    else
                     {
-                        if (skillChoice2.TargetOptions == Skill.SkillTarget.TargetAllEnemies) { UseSkill(battle, skillChoice2); }
-                        else
-                        {
-                            Player targetPlayer = battle.Players[rnd.Next(1, battle.PlayerCount + 1) - 1];   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
-                            UseSkill(battle, skillChoice2, targetPlayer);
-                            return;
-                        }
+                        target = rnd.Next(1, battle.PlayerCount + 1);   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
+                        Attack(battle.Players[target - 1], battle);  //If the random number isn't high enough to trump the chance of attacking, the enemy will attack
                     }
                 }
-                target = rnd.Next(1, battle.PlayerCount + 1);   // randomly chooses a player to attack, each with equal likelyhood  -> maybe make it more inclined to attack whoever hit it last, or something even more complicated
-                Attack(battle.Players[target - 1], battle);  //If the random number isn't high enough to trump the chance of attacking, the enemy will attack
             }
             else
             {
@@ -67,6 +73,7 @@ namespace RPGenius
                 Console.WriteLine("> {0} defends", Name);
                 Console.WriteLine("");
             }
+            if (StatusEffect == Skill.StatusEffect.poison) { EffectHandler(); }
         }
     }
 }
