@@ -101,7 +101,7 @@ namespace RPGenius
                 if (_spr > Convert.ToInt32(BaseSpr * 1.5)) { _spr = Convert.ToInt32(BaseSpr * 1.5); }
             }
         }
-        public string Name { get; set;/* maybe no need for set? */ }
+        public string Name { get; }
         public int TurnOrder
         {
             get { return _turnOrder; }
@@ -115,6 +115,16 @@ namespace RPGenius
         public bool IsDefending { get; set; }
         public Weapon Weapon { get; set; }
         public List<Skill> Skills = new List<Skill>();
+        public Skill.StatusEffect StatusEffect { get; set; }
+        public int EffectDurationRemaining { get; set; }
+        public Skill.EffectSeverity EffectSeverity { get; set; }
+        public List<Skill.StatChange> Buffs = new List<Skill.StatChange>();
+        public List<int> BuffDurationRemaining = new List<int>();
+        public List<Skill.EffectSeverity> BuffSeverity = new List<Skill.EffectSeverity>();
+        public List<Skill.StatChange> Debuffs = new List<Skill.StatChange>();
+        public List<int> DebuffDurationRemaining = new List<int>();
+        public List<Skill.EffectSeverity> DebuffSeverity = new List<Skill.EffectSeverity>();
+        public bool CanUseTurn { get; set; }
         //
         public Entity(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0)
         {
@@ -133,6 +143,7 @@ namespace RPGenius
             MAG = mag;
             BaseSpr = spr;
             SPR = spr;
+            CanUseTurn = true;
         }
         //
         public abstract void ExecuteTurn(Battle battle);
@@ -232,7 +243,7 @@ namespace RPGenius
             }
             if (!hitAny)
             {
-                if(s.TargetOptions == Skill.SkillTarget.TargetAllEnemies || s.TargetOptions == Skill.SkillTarget.TargetAllPlayers)
+                if(s.TargetOptions == Skill.SkillTarget.TargetAllEnemies || s.TargetOptions == Skill.SkillTarget.TargetAllFriends)
                 {
                     Console.WriteLine("{0}'s {1} missed everyone", Name, s.Name);
                 }
@@ -254,6 +265,7 @@ namespace RPGenius
                     Console.WriteLine("{0} has been defeated!", target.Name);
                     battle.RemoveEntity(target);
                 }
+                else { EffectApplier(s, target); }
                 return;
             }
             if (s.GetType() == typeof(MagSkill) && target != null)  //this handles *all* single target magic attacks
@@ -390,6 +402,115 @@ namespace RPGenius
                 Console.WriteLine("{0} has been defeated!", e.Name);
                 battle.RemoveEntity(e);
             }
+        }
+        /// <summary>
+        /// Applies a skill's status effect
+        /// </summary>
+        /// <param name="s">The skill being used</param>
+        /// <param name="target">The target the skill is being used on</param>
+        private void EffectApplier(Skill s, Entity target)
+        {
+            Random rnd = new Random();
+            int effectHit = rnd.Next(1, 100);
+            if(effectHit > s.EffectChance) { return; }  //if the random number is higher than the chance of the effect hitting, it misses, and so we return from the method
+            target.StatusEffect = s.Effect;
+            target.EffectSeverity = s.Severity;
+            switch (s.Effect)
+            {
+                case Skill.StatusEffect.none:
+                    return;
+                case Skill.StatusEffect.poison:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 3);
+                    Console.WriteLine("{0} has been poisoned", target.Name);
+                    break;
+                case Skill.StatusEffect.burn:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Console.WriteLine("{0} has been burned", target.Name);
+                    break;
+                case Skill.StatusEffect.freeze:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Console.WriteLine("{0} has been encased in ice", target.Name);
+                    break;
+                case Skill.StatusEffect.stun:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 2);
+                    Console.WriteLine("{0} is seeing stars", target.Name);
+                    break;
+                case Skill.StatusEffect.confusion:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 4);
+                    Console.WriteLine("{0} doesn't know right from left", target.Name);
+                    break;
+                case Skill.StatusEffect.fear:
+                    target.EffectDurationRemaining = s.EffectLength + rnd.Next(-1, 1);
+                    Console.WriteLine("{0} is afraid for their life", target.Name);
+                    break;
+                default:
+                    throw new Exception();  // this will only be called if the enum is expanded and not handled by this switch
+            }
+        }
+        /// <summary>
+        /// This functions processes necessary handling for effect duration and statements, as well as handling damage for poison and burn
+        /// </summary>
+        protected void EffectHandler()
+        {
+            if(StatusEffect == Skill.StatusEffect.none) { return; }
+            Random rnd = new Random();
+            int damageMod;
+            int varience;
+            int damage;
+            EffectDurationRemaining--;
+            switch (StatusEffect)
+            {
+                case Skill.StatusEffect.poison:
+                    if(EffectSeverity == Skill.EffectSeverity.light) { damageMod = 10; varience = 7; }              // 3-17 damage
+                    else if(EffectSeverity == Skill.EffectSeverity.moderate) { damageMod = 35; varience = 12; }     // 23-47 damage
+                    else /*heavy*/ { damageMod = 70; varience = 20; }                                               // 50-90 damage
+                    damage = damageMod + rnd.Next(-varience, varience);
+                    if (HP - damage < 1) { HP = 1; }
+                    else { HP -= damage; }
+                    Console.WriteLine("{0} takes {1} damage from poison. HP now {2}/{3}", Name, damage, HP, BaseHp);
+                    if(EffectDurationRemaining <= 0)
+                    {
+                        Thread.Sleep(700);
+                        Console.WriteLine("{0} is no longer poisoned", Name);
+                    }
+                    break;
+                case Skill.StatusEffect.burn:
+                    if (EffectSeverity == Skill.EffectSeverity.light) { damageMod = 27; varience = 10; }            // 17-37 damage
+                    if (EffectSeverity == Skill.EffectSeverity.moderate) { damageMod = 63; varience = 20; }         // 43-83 damage
+                    else /*heavy*/ { damageMod = 117; varience = 23; }                                              // 94-140 damage
+                    damage = damageMod + rnd.Next(-varience, varience);
+                    HP -= damage;
+                    Console.WriteLine("{0} takes {1} damage from . HP now {2}/{3}", Name, damage, HP, BaseHp);
+                    if (EffectDurationRemaining <= 0)
+                    {
+                        Thread.Sleep(700);
+                        Console.WriteLine("{0} is no longer burned", Name);
+                    }
+                    break;
+                case Skill.StatusEffect.freeze:
+                    if (EffectDurationRemaining > 0) { Console.WriteLine("{0} is frozen in place", Name); }
+                    else { Console.WriteLine("{0} is no longer frozen", Name); }
+                    break;
+                case Skill.StatusEffect.stun:
+                    if (EffectDurationRemaining > 0) { Console.WriteLine("{0} is still feeling dizzy", Name); }
+                    else { Console.WriteLine("{0} is no longer stunned", Name); }
+                    break;
+                case Skill.StatusEffect.fear:
+                    if (EffectDurationRemaining <= 0)
+                    {
+                        Thread.Sleep(700);
+                        Console.WriteLine("{0} is no longer afraid", Name);
+                    }
+                    break;
+                case Skill.StatusEffect.confusion:
+                    if (EffectDurationRemaining <= 0)
+                    {
+                        Thread.Sleep(700);
+                        Console.WriteLine("{0} is no longer confused", Name);
+                    }
+                    break;
+            }
+            if (EffectDurationRemaining <= 0) { StatusEffect = Skill.StatusEffect.none; }
         }
     }
 }

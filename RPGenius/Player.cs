@@ -14,6 +14,7 @@ namespace RPGenius
         public override void ExecuteTurn(Battle battle)
         {
             IsDefending = false;
+            EffectHandler();
             int choice;
             Console.WriteLine("");
             Console.WriteLine("What will {0} do?\t\tHP: {1}/{2}  MP: {3}/{4}", Name, HP, BaseHp, MP, BaseMp);
@@ -104,7 +105,7 @@ namespace RPGenius
                 case Skill.SkillTarget.TargetAllEnemies:
                     UseSkill(battle, s);
                     return 1;
-                case Skill.SkillTarget.TargetOnePlayer:
+                case Skill.SkillTarget.TargetOneFriend:
                     Console.WriteLine("Who would you like to target?");
                     int playerIterate = 1;
                     foreach (Player p in battle.Players)
@@ -118,7 +119,7 @@ namespace RPGenius
                     if (choice == playerIterate) { return 0; }
                     UseSkill(battle, s, battle.Players[choice - 1]);
                     return 1;
-                case Skill.SkillTarget.TargetAllPlayers:
+                case Skill.SkillTarget.TargetAllFriends:
                     UseSkill(battle, s);
                     return 1;
                 case Skill.SkillTarget.TargetSelf:

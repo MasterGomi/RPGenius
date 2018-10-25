@@ -15,6 +15,7 @@ namespace RPGenius
         public override void ExecuteTurn(Battle battle)
         {
             Thread.Sleep(2000);
+            EffectHandler();
             IsDefending = false;
             Random rnd = new Random();
             int attackChance = HP / BaseHp * 100;     //Chance of attack is higher if health is higher. (represented as an integer percentage)

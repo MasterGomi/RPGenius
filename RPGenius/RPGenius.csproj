@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuffSkill.cs" />
+    <Compile Include="DebuffSkill.cs" />
     <Compile Include="PhysSkill.cs" />
     <Compile Include="Battle.cs" />
     <Compile Include="Enemy.cs" />

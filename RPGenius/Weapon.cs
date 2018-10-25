@@ -15,6 +15,7 @@ namespace RPGenius
         public string Name { get => _name; }
         public int ATK { get => _atk; }
         public int Varience { get => _varience; }
+        //Maybe weapons have their own miss and crit chance
         //
         public Weapon(string name, int atk, int atkVarience)
         {
