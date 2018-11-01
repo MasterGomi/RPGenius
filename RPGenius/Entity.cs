@@ -125,6 +125,7 @@ namespace RPGenius
         public List<int> DebuffDurationRemaining = new List<int>();
         public List<Skill.EffectSeverity> DebuffSeverity = new List<Skill.EffectSeverity>();
         public bool CanUseTurn { get; set; }
+        public bool HaveTurnLater { get; set; }
         //
         public Entity(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0)
         {
@@ -144,6 +145,7 @@ namespace RPGenius
             BaseSpr = spr;
             SPR = spr;
             CanUseTurn = true;
+            HaveTurnLater = false;
         }
         //
         public abstract void ExecuteTurn(Battle battle);

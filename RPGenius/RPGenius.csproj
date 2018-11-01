@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="BuffSkill.cs" />
     <Compile Include="DebuffSkill.cs" />
+    <Compile Include="IEffectOrBuff.cs" />
     <Compile Include="PhysSkill.cs" />
     <Compile Include="Battle.cs" />
     <Compile Include="Enemy.cs" />
@@ -51,9 +52,11 @@
     <Compile Include="ExtraSystem.cs" />
     <Compile Include="MagSkill.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="Effects.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Skill.cs" />
+    <Compile Include="StatusEffect.cs" />
     <Compile Include="Sword.cs" />
     <Compile Include="Weapon.cs" />
   </ItemGroup>
