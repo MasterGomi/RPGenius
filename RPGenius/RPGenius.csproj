@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="BuffSkill.cs" />
     <Compile Include="DebuffSkill.cs" />
+    <Compile Include="EffectFactory.cs" />
     <Compile Include="IEffectOrBuff.cs" />
     <Compile Include="PhysSkill.cs" />
     <Compile Include="Battle.cs" />

@@ -14,11 +14,11 @@ namespace RPGenius
         public override void ExecuteTurn(Battle battle)
         {
             IsDefending = false;
-            if (StatusEffect == Skill.StatusEffect.burn || StatusEffect == Skill.StatusEffect.freeze) { EffectHandler(); }
+            if (Effect != null) { Effect.Handle(this); }
             int choice;
             Console.WriteLine("");
             
-            Console.WriteLine("What will {0} do?\nHP: {1}/{2}\tMP: {3}/{4}{5}\n", Name, HP, BaseHp, MP, BaseMp, DisplayEffect());
+            Console.WriteLine("What will {0} do?\nHP: {1}/{2}\tMP: {3}/{4}{5}\n", Name, HP, BaseHp, MP, BaseMp, Effect.Display());
             do
             {
                 Console.Write("1. Attack\t2. Defend");
@@ -77,7 +77,7 @@ namespace RPGenius
                         break;
                 }
             } while (choice == 0);
-            if(StatusEffect == Skill.StatusEffect.poison) { EffectHandler(); }
+            //if(StatusEffect == Skill.StatusEffect.poison) { EffectHandler(); }
         }
         /// <summary>
         /// Determines (using user input) which target is to be used by the skill
@@ -86,7 +86,7 @@ namespace RPGenius
         /// <param name="battle">The current Battle object</param>
         /// <returns>
         /// Returns 1 after succesful execution. Returns 0 if player chooses [back]. 
-        /// Throws a hard-coded NullReferenceException if TargetOptions isn't playing nice and 
+        /// Throws a hard-coded ArgumentOutOfRangeException if TargetOptions isn't playing nice and 
         /// the program doesn't automatically break when starting the switch
         /// </returns>
         private int ChooseSkillTarget(Skill s, Battle battle)
@@ -131,32 +131,7 @@ namespace RPGenius
                 case Skill.SkillTarget.TargetSelf:
                     UseSkill(battle, s, this);
                     return 1;
-                default: throw new NullReferenceException();
-            }
-        }
-        /// <summary>
-        /// Determines what needs to be shown to the player to inform them of their status effect. Returns it as a string.
-        /// </summary>
-        /// <returns>Returns a string with relevant status notification. Returns an empty string if not required</returns>
-        private string DisplayEffect()
-        {
-            switch (StatusEffect)
-            {
-                case Skill.StatusEffect.none:
-                case Skill.StatusEffect.freeze:     //this also returns an empty string as this function should never be called when frozen, as the player doesn't get their turn
-                    return "";
-                case Skill.StatusEffect.poison:
-                    return "\t*poisoned*";
-                case Skill.StatusEffect.burn:
-                    return "\t*burned*";
-                case Skill.StatusEffect.fear:
-                    return "\t*afraid";
-                case Skill.StatusEffect.confusion:
-                    return "\t*confused";
-                case Skill.StatusEffect.stun:
-                    return "\t*stunned*";
-                default:
-                    throw new NullReferenceException();
+                default: throw new ArgumentOutOfRangeException();
             }
         }
     }

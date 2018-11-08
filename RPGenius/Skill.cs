@@ -10,7 +10,7 @@ namespace RPGenius
     {
         protected int _atk;
         protected int _mag;
-        protected StatusEffect _status;
+        protected IEffectOrBuff _status;
         protected BonusEffect _bonus;
         protected StatChange _buff;
         protected StatChange _debuff;
@@ -54,6 +54,21 @@ namespace RPGenius
             /*add all stats*/
             TurnOrder
         }
+        public enum EffectKind
+        {
+            none,
+            poison,
+            burn,
+            freeze,
+            stun,
+            fear,
+            confusion,
+            ATK,
+            DEF,
+            MAG,
+            SPR,
+            turn
+        }
         public enum EffectSeverity
         {
             light,
@@ -67,7 +82,7 @@ namespace RPGenius
         public string Name { get; }
         public int MissChance { get; }
         public bool MultiAllOrNothing { get; }  //if true, multi target attacks either hit everyone, or no one (meaning miss chance is only checked once, instead of for each enemy)
-        public StatusEffect Effect { get => _status; }
+        public IEffectOrBuff Effect { get => _status; }
         public BonusEffect Bonus { get => _bonus; }
         public StatChange Buff { get => _buff; }
         public StatChange Debuff { get => _debuff; }
