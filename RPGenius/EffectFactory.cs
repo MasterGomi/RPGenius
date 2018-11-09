@@ -17,17 +17,17 @@ namespace RPGenius
         /// <param name="duration">How many turns the effect should be in effect for (may vary slightly)</param>
         /// <param name="severity">How severe the effect is. Necessary for poison and burn</param>
         /// <returns>Returns a IEffectOrBuff effect</returns>
-        public IEffectOrBuff Create(Skill.EffectKind effectKind, int duration, Skill.EffectSeverity severity)
+        public IEffectOrBuff Create(EffectKind effectKind, int duration, EffectSeverity severity)
         {
             switch (effectKind)
             {
-                case Skill.EffectKind.poison:
+                case EffectKind.poison:
                     return new Poison(duration, severity);
-                case Skill.EffectKind.burn:
+                case EffectKind.burn:
                     return new Burn(duration, severity);
-                case Skill.EffectKind.freeze:
+                case EffectKind.freeze:
                     return new Freeze(duration);
-                case Skill.EffectKind.stun:
+                case EffectKind.stun:
                     return new Stun(duration);
                 default: throw new NotImplementedException();
             }

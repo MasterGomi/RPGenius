@@ -11,19 +11,19 @@ namespace RPGenius
     {
         private int _damageVar;
         private int _baseDamage;
-        public Poison(int baseDuration, Skill.EffectSeverity severity) : base(baseDuration)
+        public Poison(int baseDuration, EffectSeverity severity) : base(baseDuration)
         {
             switch (severity)
             {
-                case Skill.EffectSeverity.light:
+                case EffectSeverity.light:
                     _baseDamage = 10;
                     _damageVar = 7;
                     break;
-                case Skill.EffectSeverity.moderate:
+                case EffectSeverity.moderate:
                     _baseDamage = 35;
                     _damageVar = 12;
                     break;
-                case Skill.EffectSeverity.heavy:
+                case EffectSeverity.heavy:
                     _baseDamage = 70;
                     _damageVar = 20;
                     break;
@@ -54,7 +54,7 @@ namespace RPGenius
         }
         public override string Display()
         {
-            return "\t*poisoned*";
+            return "*poisoned*";
         }
     }
     //
@@ -63,19 +63,19 @@ namespace RPGenius
     {
         private int _damageVar;
         private int _baseDamage;
-        public Burn(int baseDuration, Skill.EffectSeverity severity) : base(baseDuration)
+        public Burn(int baseDuration, EffectSeverity severity) : base(baseDuration)
         {
             switch (severity)
             {
-                case Skill.EffectSeverity.light:
+                case EffectSeverity.light:
                     _baseDamage = 27;
                     _damageVar = 10;
                     break;
-                case Skill.EffectSeverity.moderate:
+                case EffectSeverity.moderate:
                     _baseDamage = 63;
                     _damageVar = 20;
                     break;
-                case Skill.EffectSeverity.heavy:
+                case EffectSeverity.heavy:
                     _baseDamage = 117;
                     _damageVar = 23;
                     break;
@@ -105,7 +105,7 @@ namespace RPGenius
         }
         public override string Display()
         {
-            return "\t*burned*";
+            return "*burned*";
         }
     }
     //
@@ -134,7 +134,7 @@ namespace RPGenius
         }
         public override string Display()
         {
-            return "Whoops, something went wrong";  //Should never be seen, as players don't get thier turn when frozen
+            return "*frozen*";
         }
     }
     //
@@ -165,7 +165,7 @@ namespace RPGenius
         }
         public override string Display()
         {
-            return "\t*stunned*";
+            return "*stunned*";
         }
     }
     //

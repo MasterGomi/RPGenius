@@ -8,6 +8,7 @@ namespace RPGenius
 {
     class Player : Entity
     {
+        
         //
         public Player(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0) : base(name, turnOrder, hp, atk, def, mp, mag, spr) { }
         //

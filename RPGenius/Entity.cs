@@ -125,6 +125,18 @@ namespace RPGenius
         public List<Skill.EffectSeverity> BuffSeverity = new List<Skill.EffectSeverity>();      // } (basically consolidate and handle with IEffectOrBuffs)
         public List<Skill.StatChange> Debuffs = new List<Skill.StatChange>();                   // }
         public List<int> DebuffDurationRemaining = new List<int>();
+        public string EffectString
+        {
+            get
+            {
+                string result = "    " + Effect.Display();
+                //foreach(IEffectOrBuff stat in StatEffects)
+                //{
+                //    result += "  " + stat.Display();
+                //}
+                return result;
+            }
+        }
         public bool CanUseTurn { get; set; }
         public bool HaveTurnLater { get; set; }
         public bool Afraid { get; set; }
