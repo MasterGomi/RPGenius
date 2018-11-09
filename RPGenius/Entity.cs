@@ -452,7 +452,7 @@ namespace RPGenius
                     }
                 }
             }
-            else /*(buff/debuff)*/
+            else /*(support/special)*/
             {
                 throw new NotImplementedException();
             }

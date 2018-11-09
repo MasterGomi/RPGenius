@@ -15,9 +15,9 @@ namespace RPGenius
         /// </summary>
         /// <param name="effectKind">The type of effect</param>
         /// <param name="duration">How many turns the effect should be in effect for (may vary slightly)</param>
-        /// <param name="severity">How severe the effect is. Necessary for poison and burn (defaults to light)</param>
+        /// <param name="severity">How severe the effect is. Necessary for poison and burn</param>
         /// <returns>Returns a IEffectOrBuff effect</returns>
-        public IEffectOrBuff Create(Skill.EffectKind effectKind, int duration, Skill.EffectSeverity severity = Skill.EffectSeverity.light)
+        public IEffectOrBuff Create(Skill.EffectKind effectKind, int duration, Skill.EffectSeverity severity)
         {
             switch (effectKind)
             {

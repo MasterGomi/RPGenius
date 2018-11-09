@@ -14,7 +14,7 @@ namespace RPGenius
         public override void ExecuteTurn(Battle battle)
         {
             IsDefending = false;
-            if (Effect != null) { Effect.Handle(this); }
+            if (Effect != null) { Effect.Handle(this, 1); }
             int choice;
             Console.WriteLine("");
             
@@ -77,7 +77,12 @@ namespace RPGenius
                         break;
                 }
             } while (choice == 0);
-            //if(StatusEffect == Skill.StatusEffect.poison) { EffectHandler(); }
+            if (Effect != null) { Effect.Handle(this, 3); }
+            if (EffectDurationRemaining <= 0) { Effect = null; }
+            HaveTurnLater = false;
+            CanUseTurn = true;
+            Afraid = false;
+            Confused = false;
         }
         /// <summary>
         /// Determines (using user input) which target is to be used by the skill

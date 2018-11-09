@@ -18,7 +18,7 @@ namespace RPGenius
             target.EffectDurationRemaining = _baseDuration + rnd.Next(-1, 1);
             target.Effect = this;
         }
-        public abstract void Handle(Entity target);
+        public abstract void Handle(Entity target, int turnProgress);
         public abstract string Display();
         //
         public StatusEffect(int baseDuration)

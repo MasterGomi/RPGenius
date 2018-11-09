@@ -10,7 +10,6 @@ namespace RPGenius
     {
         protected int _atk;
         protected int _mag;
-        protected IEffectOrBuff _status;
         protected BonusEffect _bonus;
         protected StatChange _buff;
         protected StatChange _debuff;
@@ -82,24 +81,37 @@ namespace RPGenius
         public string Name { get; }
         public int MissChance { get; }
         public bool MultiAllOrNothing { get; }  //if true, multi target attacks either hit everyone, or no one (meaning miss chance is only checked once, instead of for each enemy)
-        public IEffectOrBuff Effect { get => _status; }
-        public BonusEffect Bonus { get => _bonus; }
-        public StatChange Buff { get => _buff; }
-        public StatChange Debuff { get => _debuff; }
-        public int EffectLength { get; }
+        public IEffectOrBuff Effect { get; }
+        //public BonusEffect Bonus { get => _bonus; }
+        //public StatChange Buff { get => _buff; }
+        //public StatChange Debuff { get => _debuff; }
         public int EffectChance { get; }
-        public EffectSeverity Severity { get; }
         //
-        public Skill(string name, SkillTarget targetOptions, int mpCost, int missChance, bool allOrNothing, int effectLength, int effectChance, EffectSeverity severity)
+        /// <summary>
+        /// Creates a Skill object
+        /// </summary>
+        /// <param name="name">Name of the skill</param>
+        /// <param name="targetOptions">The possible targets for the skill</param>
+        /// <param name="mpCost">The MP cost for using the skill</param>
+        /// <param name="missChance">The (percentile) chance of the skill missing</param>
+        /// <param name="allOrNothing">Determines if the attack hitting is checked once, or for each enemy</param>
+        /// <param name="effectKind">Type of effect the skill has (use none for no effect)</param>
+        /// <param name="effectDuration">Number of turns the effect lasts for</param>
+        /// <param name="effectChance">The (percentile) chance of the effect being applied</param>
+        /// <param name="severity">The severity of the effect</param>
+        public Skill(string name, SkillTarget targetOptions, int mpCost, int missChance, bool allOrNothing, EffectKind effectKind, int effectDuration, int effectChance, EffectSeverity severity)
         {
             Name = name;
             TargetOptions = targetOptions;
             MPCost = mpCost;
             MissChance = missChance;
             MultiAllOrNothing = allOrNothing;
-            EffectLength = effectLength;
             EffectChance = effectChance;
-            Severity = severity;
+            if (effectKind != EffectKind.none)
+            {
+                EffectFactory effectFactory = new EffectFactory();
+                Effect = effectFactory.Create(effectKind, effectDuration, severity);
+            }
         }
     }
 }
