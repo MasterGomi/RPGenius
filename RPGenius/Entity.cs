@@ -186,7 +186,7 @@ namespace RPGenius
             if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.5); }
             if (damage == 0) { damage = 1; }
             int missChance = 15;    // 15% chance to miss, will be different and varied depending on stat settings
-            int hit = rnd.Next(1, 100);
+            int hit = rnd.Next(1, 101);
             if (hit > missChance)    //if the attack hits
             {
                 target.HP -= damage;
@@ -212,18 +212,18 @@ namespace RPGenius
             bool hitAny = false;
             if ((target != null && target != this) || s.MultiAllOrNothing == true)
             {
-                hit = rnd.Next(1, 100);
+                hit = rnd.Next(1, 101);
                 if (hit > s.MissChance) { hitAny = true; }
             }
             else
             {
-                if (s.TargetOptions == Skill.SkillTarget.TargetAllEnemies)
+                if (s.TargetOptions == SkillTarget.TargetAllEnemies)
                 {
                     if (GetType() == typeof(Player))
                     {
                         foreach (Enemy e in battle.Enemies)
                         {
-                            hit = rnd.Next(1, 100);
+                            hit = rnd.Next(1, 101);
                             if (hit > s.MissChance) { multiHits.Add(true); }
                             else { multiHits.Add(false); }
                         }
@@ -232,7 +232,7 @@ namespace RPGenius
                     {
                         foreach (Player p in battle.Players)
                         {
-                            hit = rnd.Next(1, 100);
+                            hit = rnd.Next(1, 101);
                             if (hit > s.MissChance) { multiHits.Add(true); }
                             else { multiHits.Add(false); }
                         }
@@ -244,7 +244,7 @@ namespace RPGenius
                     {
                         foreach (Player p in battle.Players)
                         {
-                            hit = rnd.Next(1, 100);
+                            hit = rnd.Next(1, 101);
                             if (hit > s.MissChance) { multiHits.Add(true); }
                             else { multiHits.Add(false); }
                         }
@@ -253,7 +253,7 @@ namespace RPGenius
                     {
                         foreach (Enemy e in battle.Enemies)
                         {
-                            hit = rnd.Next(1, 100);
+                            hit = rnd.Next(1, 101);
                             if (hit > s.MissChance) { multiHits.Add(true); }
                             else { multiHits.Add(false); }
                         }
@@ -280,7 +280,7 @@ namespace RPGenius
             //
             //At this point all (entirely) missed skill uses have been dealt with and multi hits have been determined
             //
-            if (s.GetType() == typeof(PhysSkill) && target != null)  //this handles *all* single target physical attacks
+            if (s is PhysSkill && target != null)  //this handles *all* single target physical attacks
             {
                 int damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - target.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
                 if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
@@ -294,7 +294,7 @@ namespace RPGenius
                 }
                 else if (s.Effect != null)
                 {
-                    int effectHit = rnd.Next(1, 100);
+                    int effectHit = rnd.Next(1, 101);
                     if (effectHit <= s.EffectChance)
                     {
                         s.Effect.Apply(target);
@@ -302,7 +302,7 @@ namespace RPGenius
                 }
                 return;
             }
-            if (s.GetType() == typeof(MagSkill) && target != null)  //this handles *all* single target magic attacks
+            if (s is MagSkill && target != null)  //this handles *all* single target magic attacks
             {
                 int damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - target.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
                 if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
@@ -316,7 +316,7 @@ namespace RPGenius
                 }
                 else if (s.Effect != null)
                 {
-                    int effectHit = rnd.Next(1, 100);
+                    int effectHit = rnd.Next(1, 101);
                     if (effectHit <= s.EffectChance)
                     {
                         s.Effect.Apply(target);
@@ -326,7 +326,7 @@ namespace RPGenius
             }
             List<Entity> deaths = new List<Entity>();   //must be handled ouside of loop as it changes the list that is being looped upon
             /*single target buffs/debuffs*/
-            if (s.GetType() == typeof(PhysSkill))
+            if (s is PhysSkill)
             {
                 if (GetType() == typeof(Player)) //multi-target physical and magic attacks always hit oposing side, therefore target is Enemies
                 {
@@ -351,7 +351,7 @@ namespace RPGenius
                         Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
                         if (s.Effect != null)
                         {
-                            int effectHit = rnd.Next(1, 100);
+                            int effectHit = rnd.Next(1, 101);
                             if (effectHit <= s.EffectChance)
                             {
                                 s.Effect.Apply(e);
@@ -384,7 +384,7 @@ namespace RPGenius
                         Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
                         if (s.Effect != null)
                         {
-                            int effectHit = rnd.Next(1, 100);
+                            int effectHit = rnd.Next(1, 101);
                             if (effectHit <= s.EffectChance)
                             {
                                 s.Effect.Apply(p);
@@ -395,7 +395,7 @@ namespace RPGenius
                     }
                 }
             }
-            else if (s.GetType() == typeof(MagSkill))
+            else if (s is MagSkill)
             {
                 if (GetType() == typeof(Player)) //multi-target physical and magic attacks always hit oposing side, therefore target is Enemies
                 {
@@ -420,7 +420,7 @@ namespace RPGenius
                         Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
                         if (s.Effect != null)
                         {
-                            int effectHit = rnd.Next(1, 100);
+                            int effectHit = rnd.Next(1, 101);
                             if (effectHit <= s.EffectChance)
                             {
                                 s.Effect.Apply(e);
@@ -453,7 +453,7 @@ namespace RPGenius
                         Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
                         if (s.Effect != null)
                         {
-                            int effectHit = rnd.Next(1, 100);
+                            int effectHit = rnd.Next(1, 101);
                             if (effectHit <= s.EffectChance)
                             {
                                 s.Effect.Apply(p);

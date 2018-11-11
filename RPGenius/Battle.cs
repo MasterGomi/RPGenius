@@ -25,7 +25,7 @@ namespace RPGenius
         /// <param name="e">The entity to be added</param>
         public void AddEntity(Entity e)
         {
-            if (e.GetType() == typeof(Enemy)) { Enemies.Add(e as Enemy); }
+            if (e is Enemy) { Enemies.Add(e as Enemy); }
             else { Players.Add(e as Player); }
             EntityReg.Add(e, e.TurnOrder);
         }
@@ -35,7 +35,7 @@ namespace RPGenius
         /// <param name="e">The entity to be removed</param>
         public void RemoveEntity(Entity e)
         {
-            if (e.GetType() == typeof(Enemy)) { Enemies.Remove(e as Enemy); }
+            if (e is Enemy) { Enemies.Remove(e as Enemy); }
             else { Players.Remove(e as Player); }
             EntityReg.Remove(e);
         }

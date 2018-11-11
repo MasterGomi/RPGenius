@@ -7,7 +7,7 @@ using System.IO;
 
 namespace RPGenius
 {
-    public static class ExSys   //short for extra system. Contains aditional system-like methods
+    public static class ExSys   //short for extra system. Contains additional system-like methods
     {
         public static int ReadInt()
         {

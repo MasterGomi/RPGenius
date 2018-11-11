@@ -22,7 +22,7 @@ namespace RPGenius
             if (attackChance > 90) { attackChance = 90; }           //This statement ensures the chance of defense is always at least 10%
             else if (attackChance > 70) { attackChance = 80; }      // This statement is a fun flavour statment, this means that when the enemy is between 70% and 90% of their health, they'll have an 80% chance of attacking
             else if (attackChance < 50) { attackChance = 50; }      //this statement means that as soon as the enemy drops below 50% health, they will always have only a 50% chance of attacking
-            int choice = rnd.Next(1, 100);     //Generates a random integer between 1 and 100 inclusive
+            int choice = rnd.Next(1, 101);     //Generates a random integer between 1 and 100 inclusive
             if (choice <= attackChance)
             {
                 int target;
@@ -34,7 +34,7 @@ namespace RPGenius
                 else
                 {
                     int skillChance = /*25*/ 100;
-                    if (rnd.Next(1, 100) <= skillChance)
+                    if (rnd.Next(1, 101) <= skillChance)
                     {
                         Skill skillChoice1 = Skills[rnd.Next(1, Skills.Count) - 1];
                         if (skillChoice1.MPCost <= MP)

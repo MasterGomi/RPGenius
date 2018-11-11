@@ -29,7 +29,7 @@ namespace RPGenius
             battle.AddEntity(goblin1);
             battle.AddEntity(goblin2);
             battle.AddEntity(goblinLeader);
-            foreach(KeyValuePair<Entity, int> e in battle.EntityReg)
+            foreach (KeyValuePair<Entity, int> e in battle.EntityReg)
             {
                 e.Key.Weapon = ironSword;
                 e.Key.Skills.Add(heavySlash);
