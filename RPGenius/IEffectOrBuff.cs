@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// an interface that encompasses necessary feature of all status effects and (de)buffs
+    /// </summary>
     interface IEffectOrBuff
     {
         /// <summary>

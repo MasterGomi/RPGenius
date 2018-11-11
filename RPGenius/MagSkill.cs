@@ -6,18 +6,39 @@ using System.Threading.Tasks;
 
 namespace RPGenius
 {
-    class MagSkill : Skill
+    /// <summary>
+    /// A magical skill that deals damage
+    /// </summary>
+    class MagSkill : OffensiveSkill
     {
-        public MagSkill(string name, SkillTarget targetOptions, int mag, int mpCost, int missChance, bool allOrNothing = false, BonusEffect bonus = BonusEffect.none,
-            StatusEffect status = StatusEffect.none, StatChange debuff = StatChange.none, int effectLength = 0, int effectChance = 0, EffectSeverity severity = EffectSeverity.light)
-            : base(name, targetOptions, mpCost, missChance, allOrNothing, effectLength, effectChance, severity)
+        /// <summary>
+        /// Creates a offensive magical skill with an effect
+        /// </summary>
+        /// <param name="name">The name of the skill</param>
+        /// <param name="targetOptions">The targeting options available</param>
+        /// <param name="mag">The base magic stat</param>
+        /// <param name="mpCost">The ammount of MP necessary for using the skill</param>
+        /// <param name="missChance">The (percentile) chance of the skill missing</param>
+        /// <param name="effectKind">The type of effect the skill imparts</param>
+        /// <param name="effectDuration">The number of turns the skill is in effect for</param>
+        /// <param name="effectChance">The (percentile) chance of the effect being applied</param>
+        /// <param name="severity">The severity of the effect. Used for poison and burn</param>
+        /// <param name="allOrNothing">Determines if the hit is checked once for all targets, or individually (used for skills with multiple targets)</param>
+        public MagSkill(string name, SkillTarget targetOptions, int mag, int mpCost, int missChance, EffectKind effectKind, int effectDuration, int effectChance, EffectSeverity severity = EffectSeverity.light, bool allOrNothing = false)
+            : base(name, targetOptions, mpCost, missChance, allOrNothing, effectKind, effectDuration, effectChance, severity)
         {
             _mag = mag;
-            _bonus = bonus;
-            if (bonus == BonusEffect.HasStatusEffect) { _status = status; }
-            else { _status = StatusEffect.none; }
-            if (bonus == BonusEffect.HasStatDebuff) { _debuff = debuff; }
-            else { _status = StatusEffect.none; }
         }
+        /// <summary>
+        /// Creates an offensive magical skill
+        /// </summary>
+        /// <param name="name">The name of the skill</param>
+        /// <param name="targetOptions">The targeting options available</param>
+        /// <param name="mag">The base magic stat</param>
+        /// <param name="mpCost">The ammount of MP necessary for using the skill</param>
+        /// <param name="missChance">The (percentile) chance of the skill missing</param>
+        /// <param name="allOrNothing">Determines if the hit is checked once for all targets, or individually (used for skills with multiple targets)</param>
+        public MagSkill(string name, SkillTarget targetOptions, int mag, int mpCost, int missChance, bool allOrNothing = false)
+            : this(name, targetOptions, mag, mpCost, missChance, EffectKind.none, 0, 0, EffectSeverity.light, allOrNothing) { }
     }
 }

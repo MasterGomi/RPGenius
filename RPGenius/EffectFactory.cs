@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// Used to create and return necessary StatusEffects
+    /// </summary>
     class EffectFactory
     {
         public EffectFactory() { }

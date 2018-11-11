@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// The class that runs the battle and contains a record of all participants
+    /// </summary>
     class Battle
     {
         private List<Entity> _turnOrder = new List<Entity>();
@@ -17,6 +20,8 @@ namespace RPGenius
         public Dictionary<Entity, int> EntityReg = new Dictionary<Entity, int>();   // to represent static entities attached to a changing number (turn order number)
         public List<Player> Players = new List<Player>();   // a collection of all player entities
         public List<Enemy> Enemies = new List<Enemy>();     // a collection of all enemy entities
+        public List<Entity> RemoveQueue { get; }        //a collection of enemies to be removed from battle at the end of a round
+            = new List<Entity>();
         //
         public Battle(/*battle parameters?*/) { }
         /// <summary>
@@ -39,19 +44,29 @@ namespace RPGenius
             else { Players.Remove(e as Player); }
             EntityReg.Remove(e);
         }
+        /// <summary>
+        /// Starts the battle
+        /// </summary>
         public void Start()
         {
-            Console.WriteLine("You have encountered");
+            Console.WriteLine("You have encountered:");
             foreach(Enemy e in Enemies)
             {
                 Console.WriteLine("\t{0}", e.Name);
             }
+            Thread.Sleep(1500);
             Console.WriteLine("");
             Console.WriteLine("Battle commences!");
+            Thread.Sleep(1000);
             while(PlayerCount > 0 && EnemyCount > 0)    //so long as there are any entities left in the battle...
             {
                 DetermineTurnOrder();
                 Turn();         //... loop through their turns
+                foreach(Entity e in RemoveQueue)
+                {
+                    RemoveEntity(e);
+                }
+                RemoveQueue.Clear();
             }
         }
         /// <summary>
@@ -81,8 +96,21 @@ namespace RPGenius
                 Console.WriteLine("It is {0}'s turn", e.Name);
                 Console.WriteLine("");
                 e.ExecuteTurn(this);
-                Thread.Sleep(3000);
+                Thread.Sleep(2500);
                 if(PlayerCount <= 0 || EnemyCount <= 0) { break; }  //stop looping turns if all of one side is defeated
+            }
+        }
+        /// <summary>
+        /// Removes and dead entities
+        /// </summary>
+        /// <param name="deaths">An array of dead entities</param>
+        public void HandleDeaths(Entity[] deaths)
+        {
+            foreach(Entity e in deaths)
+            {
+                Thread.Sleep(500);
+                Console.WriteLine("\n> {0} has been defeated!", e.Name);
+                RemoveEntity(e);
             }
         }
     }

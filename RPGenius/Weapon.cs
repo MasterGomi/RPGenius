@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// An object representing the weapon entities use for simple attack. Contains stats that affect damage
+    /// </summary>
     abstract class Weapon
     {
         private string _name;

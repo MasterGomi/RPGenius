@@ -7,8 +7,15 @@ using System.IO;
 
 namespace RPGenius
 {
-    public static class ExSys   //short for extra system. Contains additional system-like methods
+    /// <summary>
+    /// Short for "Extra System". Contains extra, system-like methods
+    /// </summary>
+    public static class ExSys
     {
+        /// <summary>
+        /// Reads an integer from the standard input stream
+        /// </summary>
+        /// <returns>Returns the integer read</returns>
         public static int ReadInt()
         {
             int result;
@@ -22,10 +29,16 @@ namespace RPGenius
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Please enter an integer");
+                    Console.WriteLine("**Please enter an integer");
                 }
             } while (3 != 4);
         }
+        /// <summary>
+        /// Reads an integer from the standard input stream that fits in the specified range
+        /// </summary>
+        /// <param name="rangeStart">The lower inclusive bound</param>
+        /// <param name="rangeEnd">The upper inclusive bound</param>
+        /// <returns>Returns the integer read</returns>
         public static int ReadIntRange(int rangeStart, int rangeEnd)
         {
             int result;
@@ -36,11 +49,11 @@ namespace RPGenius
                 {
                     result = Convert.ToInt32(input);
                     if(result >= rangeStart && result <= rangeEnd) { return result; }
-                    Console.WriteLine("Please enter an integer between {0} and {1}", rangeStart, rangeEnd);
+                    Console.WriteLine("**Please enter an integer between {0} and {1}", rangeStart, rangeEnd);
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Please enter an integer");
+                    Console.WriteLine("**Please enter an integer");
                 }
             } while (3 != 4);
         }

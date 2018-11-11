@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// The base class for both players and enemies
+    /// </summary>
     abstract class Entity
     {
         private int _turnOrder;
@@ -120,20 +123,18 @@ namespace RPGenius
         public List<Skill> Skills = new List<Skill>();
         public IEffectOrBuff Effect;
         public int EffectDurationRemaining { get; set; }
-        public List<Skill.StatChange> Buffs = new List<Skill.StatChange>();                     // }
-        public List<int> BuffDurationRemaining = new List<int>();                               // } see issues for fix
-        public List<Skill.EffectSeverity> BuffSeverity = new List<Skill.EffectSeverity>();      // } (basically consolidate and handle with IEffectOrBuffs)
-        public List<Skill.StatChange> Debuffs = new List<Skill.StatChange>();                   // }
-        public List<int> DebuffDurationRemaining = new List<int>();
+        public List<IEffectOrBuff> StatChanges = new List<IEffectOrBuff>();
+        public List<int> StatChangeDurations = new List<int>();
         public string EffectString
         {
             get
             {
-                string result = "    " + Effect.Display();
-                //foreach(IEffectOrBuff stat in StatEffects)
-                //{
-                //    result += "  " + stat.Display();
-                //}
+                string result = "  ";
+                if (Effect != null) { result += "  " + Effect.Display(); ; }
+                foreach (IEffectOrBuff stat in StatChanges)
+                {
+                    result += "  " + stat.Display();
+                }
                 return result;
             }
         }
@@ -144,7 +145,18 @@ namespace RPGenius
         public bool EffectHandleLatter { get; set; }
         //
         //
-        public Entity(string name, int turnOrder, int hp, int atk, int def, int mp = 0, int mag = 0, int spr = 0)
+        /// <summary>
+        /// Creates an entity
+        /// </summary>
+        /// <param name="name">Name of the entity</param>
+        /// <param name="turnOrder">Number representing the entities position in the turn order</param>
+        /// <param name="hp">Integer representing the base hp of the entity</param>
+        /// <param name="atk">Integer representing the base attack of the entity</param>
+        /// <param name="def">Integer representing the base defence of the entity</param>
+        /// <param name="mp">Integer representing the base mp of the entity</param>
+        /// <param name="mag">Integer representing the base magic of the entity</param>
+        /// <param name="spr">Integer representing the base resistance of the entity</param>
+        public Entity(string name, int turnOrder, int hp, int atk, int def, int mp, int mag, int spr)
         {
             Name = name;
             _turnOrder = turnOrder;
@@ -166,6 +178,10 @@ namespace RPGenius
         }
         //
         //
+        /// <summary>
+        /// Allows an entity to execute their turn
+        /// </summary>
+        /// <param name="battle">The battle object</param>
         public abstract void ExecuteTurn(Battle battle);
             // (private) effect handling
             // (abstract [int]) course of action determining   (because each sub-class will handle differently
@@ -174,6 +190,11 @@ namespace RPGenius
                 //(private) use skill
             // effect handling again maybe
             //etc.
+        /// <summary>
+        /// Carries out an attack against the specified targeted entity
+        /// </summary>
+        /// <param name="target">Entity to be attacked</param>
+        /// <param name="battle">The battle object</param>
         protected void Attack(Entity target, Battle battle)
         {
             Console.WriteLine("> {0} attacks {1}", Name, target.Name);
@@ -199,283 +220,6 @@ namespace RPGenius
                 }
             }
             else { Console.WriteLine("> The attack misses"); }
-        }
-        protected void UseSkill(Battle battle, Skill s, Entity target = null)
-        {
-            if (target == null || target == this) { Console.WriteLine("> {0} uses {1}", Name, s.Name); }     //if the target is all enemies, all players or self, don't specify target
-            else { Console.WriteLine("> {0} uses {1} on {2}", Name, s.Name, target.Name); }
-            Thread.Sleep(1500);
-            Random rnd = new Random();
-            _mp -= s.MPCost;
-            int hit;
-            List<bool> multiHits = new List<bool>();
-            bool hitAny = false;
-            if ((target != null && target != this) || s.MultiAllOrNothing == true)
-            {
-                hit = rnd.Next(1, 101);
-                if (hit > s.MissChance) { hitAny = true; }
-            }
-            else
-            {
-                if (s.TargetOptions == SkillTarget.TargetAllEnemies)
-                {
-                    if (GetType() == typeof(Player))
-                    {
-                        foreach (Enemy e in battle.Enemies)
-                        {
-                            hit = rnd.Next(1, 101);
-                            if (hit > s.MissChance) { multiHits.Add(true); }
-                            else { multiHits.Add(false); }
-                        }
-                    }
-                    else
-                    {
-                        foreach (Player p in battle.Players)
-                        {
-                            hit = rnd.Next(1, 101);
-                            if (hit > s.MissChance) { multiHits.Add(true); }
-                            else { multiHits.Add(false); }
-                        }
-                    }
-                }
-                else    //if target type is "Target all players"
-                {
-                    if (GetType() == typeof(Player))
-                    {
-                        foreach (Player p in battle.Players)
-                        {
-                            hit = rnd.Next(1, 101);
-                            if (hit > s.MissChance) { multiHits.Add(true); }
-                            else { multiHits.Add(false); }
-                        }
-                    }
-                    else
-                    {
-                        foreach (Enemy e in battle.Enemies)
-                        {
-                            hit = rnd.Next(1, 101);
-                            if (hit > s.MissChance) { multiHits.Add(true); }
-                            else { multiHits.Add(false); }
-                        }
-                    }
-                }
-                foreach (bool h in multiHits)    //loop determines if *any* of the oposing side got hit. Breaks the loops as soon as one hit is found.   (h is for hit, btw)
-                {
-                    if (h == true)
-                    {
-                        hitAny = true;
-                        break;
-                    }
-                }
-            }
-            if (!hitAny)
-            {
-                if (s.TargetOptions == Skill.SkillTarget.TargetAllEnemies || s.TargetOptions == Skill.SkillTarget.TargetAllFriends)
-                {
-                    Console.WriteLine("> {0}'s {1} missed everyone", Name, s.Name);
-                }
-                else { Console.WriteLine("> {0}'s {1} missed", Name, s.Name); }
-                return;
-            }
-            //
-            //At this point all (entirely) missed skill uses have been dealt with and multi hits have been determined
-            //
-            if (s is PhysSkill && target != null)  //this handles *all* single target physical attacks
-            {
-                int damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - target.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
-                if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
-                target.HP -= damage;
-                Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP now {4}/{5}", Name, s.Name, target.Name, damage, target.HP, target.BaseHp);  //eg: Jack's Heavy Slash hits Goblin for 45 damage. Goblin's HP now 5/50
-                if (target.HP == 0)
-                {
-                    Thread.Sleep(1000);
-                    Console.WriteLine("\n> {0} has been defeated!", target.Name);
-                    battle.RemoveEntity(target);
-                }
-                else if (s.Effect != null)
-                {
-                    int effectHit = rnd.Next(1, 101);
-                    if (effectHit <= s.EffectChance)
-                    {
-                        s.Effect.Apply(target);
-                    }
-                }
-                return;
-            }
-            if (s is MagSkill && target != null)  //this handles *all* single target magic attacks
-            {
-                int damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - target.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
-                if (target.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
-                target.HP -= damage;
-                Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP now {4}/{5}", Name, s.Name, target.Name, damage, target.HP, target.BaseHp);  //eg: Jack's Heavy Slash hits Goblin for 45 damage. Goblin's HP now 5/50
-                if (target.HP == 0)
-                {
-                    Thread.Sleep(1000);
-                    Console.WriteLine("> {0} has been defeated!", target.Name);
-                    battle.RemoveEntity(target);
-                }
-                else if (s.Effect != null)
-                {
-                    int effectHit = rnd.Next(1, 101);
-                    if (effectHit <= s.EffectChance)
-                    {
-                        s.Effect.Apply(target);
-                    }
-                }
-                return;
-            }
-            List<Entity> deaths = new List<Entity>();   //must be handled ouside of loop as it changes the list that is being looped upon
-            /*single target buffs/debuffs*/
-            if (s is PhysSkill)
-            {
-                if (GetType() == typeof(Player)) //multi-target physical and magic attacks always hit oposing side, therefore target is Enemies
-                {
-                    if (s.MultiAllOrNothing)
-                    {
-                        foreach (Enemy e in battle.Enemies) { multiHits.Add(true); }
-                    }
-                    int enemyIterate = 0;
-                    int damage;
-                    foreach (Enemy e in battle.Enemies)
-                    {
-                        if (multiHits[enemyIterate] == false)
-                        {
-                            Console.WriteLine("> {0}'s {1} misses {2}", Name, s.Name, e.Name);
-                            Thread.Sleep(700);
-                            continue;
-                        }
-                        damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - e.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
-                        if (e.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
-                        e.HP -= damage;
-                        if (e.HP == 0) { deaths.Add(e); }
-                        Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
-                        if (s.Effect != null)
-                        {
-                            int effectHit = rnd.Next(1, 101);
-                            if (effectHit <= s.EffectChance)
-                            {
-                                s.Effect.Apply(e);
-                            }
-                        }
-                        Thread.Sleep(700);
-                        enemyIterate++;
-                    }
-                }
-                else /*enemy targeting all players*/
-                {
-                    if (s.MultiAllOrNothing)
-                    {
-                        foreach (Player p in battle.Players) { multiHits.Add(true); }
-                    }
-                    int playerIterate = 0;
-                    int damage;
-                    foreach (Player p in battle.Players)
-                    {
-                        if (multiHits[playerIterate] == false)
-                        {
-                            Console.WriteLine("> {0}'s {1} misses {2}", Name, s.Name, p.Name);
-                            Thread.Sleep(700);
-                            continue;
-                        }
-                        damage = Convert.ToInt32(s.ATK + 0.75 * _atk + rnd.Next(0, Convert.ToInt32(_atk * 0.5)) - p.DEF * 0.7);   //damage of a physical skill is the skill's attack stat, plus a portion of the player's attack stat, plus a number anywhere between 0 and half of their attack stat (i.e. it can recieve anywhere form 75% to 125% of player attack as a bonus), minus 70% of the target's defense stat
-                        if (p.IsDefending) { damage = Convert.ToInt32(damage * 0.65); }
-                        p.HP -= damage;
-                        if (p.HP == 0) { deaths.Add(p); }
-                        Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
-                        if (s.Effect != null)
-                        {
-                            int effectHit = rnd.Next(1, 101);
-                            if (effectHit <= s.EffectChance)
-                            {
-                                s.Effect.Apply(p);
-                            }
-                        }
-                        Thread.Sleep(700);
-                        playerIterate++;
-                    }
-                }
-            }
-            else if (s is MagSkill)
-            {
-                if (GetType() == typeof(Player)) //multi-target physical and magic attacks always hit oposing side, therefore target is Enemies
-                {
-                    if (s.MultiAllOrNothing)
-                    {
-                        foreach (Enemy e in battle.Enemies) { multiHits.Add(true); }
-                    }
-                    int enemyIterate = 0;
-                    int damage;
-                    foreach (Enemy e in battle.Enemies)
-                    {
-                        if (multiHits[enemyIterate] == false)
-                        {
-                            Console.WriteLine("> {0}'s {1} misses {2}", Name, s.Name, e.Name);
-                            Thread.Sleep(700);
-                            continue;
-                        }
-                        damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - e.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
-                        if (e.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
-                        e.HP -= damage;
-                        if (e.HP == 0) { deaths.Add(e); }
-                        Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, e.Name, damage, e.HP, e.BaseHp);
-                        if (s.Effect != null)
-                        {
-                            int effectHit = rnd.Next(1, 101);
-                            if (effectHit <= s.EffectChance)
-                            {
-                                s.Effect.Apply(e);
-                            }
-                        }
-                        Thread.Sleep(700);
-                        enemyIterate++;
-                    }
-                }
-                else /*enemy targeting all players*/
-                {
-                    if (s.MultiAllOrNothing)
-                    {
-                        foreach (Player p in battle.Players) { multiHits.Add(true); }
-                    }
-                    int playerIterate = 0;
-                    int damage;
-                    foreach (Player p in battle.Players)
-                    {
-                        if (multiHits[playerIterate] == false)
-                        {
-                            Console.WriteLine("> {0}'s {1} misses {2}", Name, s.Name, p.Name);
-                            Thread.Sleep(700);
-                            continue;
-                        }
-                        damage = Convert.ToInt32(s.MAG + 0.25 * _mag + rnd.Next(0, Convert.ToInt32(_mag * 1.5)) - p.SPR * 0.6);   //damage of a magic skill is the skill's magic stat, plus a portion of the player's magic stat, plus a number anywhere between 0 and 1.5x their magic stat (i.e. it can recieve anywhere form 25% to 175% of player magic as a bonus), minus 60% of the target's resistance
-                        if (p.IsDefending) { damage = Convert.ToInt32(damage * 0.85); }
-                        p.HP -= damage;
-                        if (p.HP == 0) { deaths.Add(p); }
-                        Console.WriteLine("> {0}'s {1} hits {2} for {3} damage. {2}'s HP is now {4}/{5}", Name, s.Name, p.Name, damage, p.HP, p.BaseHp);
-                        if (s.Effect != null)
-                        {
-                            int effectHit = rnd.Next(1, 101);
-                            if (effectHit <= s.EffectChance)
-                            {
-                                s.Effect.Apply(p);
-                            }
-                        }
-                        Thread.Sleep(700);
-                        playerIterate++;
-                    }
-                }
-            }
-            else /*(support/special)*/
-            {
-                throw new NotImplementedException();
-            }
-            Console.WriteLine("");
-            if (deaths.Count != 0) { Thread.Sleep(1000); }
-            foreach (Entity e in deaths)
-            {
-                Thread.Sleep(500);
-                Console.WriteLine("> {0} has been defeated!", e.Name);
-                battle.RemoveEntity(e);
-            }
         }
     }
 }

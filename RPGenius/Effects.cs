@@ -7,12 +7,16 @@ using System.Threading;
 
 namespace RPGenius
 {
+    /// <summary>
+    /// A status effect that deals small amounts of damage at the end of an entities turn and won't kill them, but lasts a long time
+    /// </summary>
     class Poison : StatusEffect, IEffectOrBuff
     {
         private int _damageVar;
         private int _baseDamage;
         public Poison(int baseDuration, EffectSeverity severity) : base(baseDuration)
         {
+            _removeTerm = "poisoned";
             switch (severity)
             {
                 case EffectSeverity.light:
@@ -49,6 +53,7 @@ namespace RPGenius
                 {
                     Thread.Sleep(700);
                     Console.WriteLine("> {0} is no longer poisoned", target.Name);
+                    target.Effect = null;
                 }
             }
         }
@@ -59,12 +64,16 @@ namespace RPGenius
     }
     //
     //
+    /// <summary>
+    /// A status effect that deals high damage at the start of a turn and doesn't last long
+    /// </summary>
     class Burn : StatusEffect, IEffectOrBuff
     {
         private int _damageVar;
         private int _baseDamage;
         public Burn(int baseDuration, EffectSeverity severity) : base(baseDuration)
         {
+            _removeTerm = "burned";
             switch (severity)
             {
                 case EffectSeverity.light:
@@ -100,6 +109,7 @@ namespace RPGenius
                 {
                     Thread.Sleep(700);
                     Console.WriteLine("> {0} is no longer burned", target.Name);
+                    target.Effect = null;
                 }
             }
         }
@@ -110,9 +120,15 @@ namespace RPGenius
     }
     //
     //
+    /// <summary>
+    /// A status effect that prevents an entity from using thier turn
+    /// </summary>
     class Freeze : StatusEffect, IEffectOrBuff
     {
-        public Freeze(int baseDuration) : base(baseDuration) { }
+        public Freeze(int baseDuration) : base(baseDuration)
+        {
+            _removeTerm = "frozen";
+        }
         //
         public override void Apply(Entity target)
         {
@@ -130,6 +146,7 @@ namespace RPGenius
                     target.CanUseTurn = false;
                 }
                 else { Console.WriteLine("> {0} has broken out of the ice", target.Name); }
+                target.Effect = null;
             }
         }
         public override string Display()
@@ -139,9 +156,15 @@ namespace RPGenius
     }
     //
     //
+    /// <summary>
+    /// A status effect that forces an entity to move last in the turn order and decreases thier likelyhood of landing an attack
+    /// </summary>
     class Stun : StatusEffect, IEffectOrBuff
     {
-        public Stun(int baseDuration) : base(baseDuration) { }
+        public Stun(int baseDuration) : base(baseDuration)
+        {
+            _removeTerm = "stunned";
+        }
         //
         public override void Apply(Entity target)
         {
@@ -159,7 +182,11 @@ namespace RPGenius
                 }
                 target.EffectDurationRemaining--;
                 if (target.EffectDurationRemaining > 0) { Console.WriteLine("> {0} is still feeling dizzy", target.Name); }
-                else { Console.WriteLine("> {0} has recoved from being stunned", target.Name); }
+                else
+                {
+                    Console.WriteLine("> {0} has recoved from being stunned", target.Name);
+                    target.Effect = null;
+                }
                 target.HaveTurnLater = false;
             }
         }
