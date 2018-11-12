@@ -13,7 +13,6 @@ namespace RPGenius
     {
         protected int _atk;
         protected int _mag;
-        protected IEffectOrBuff _effect;
         protected bool _allOrNothing;
         protected int _missChance;
         //

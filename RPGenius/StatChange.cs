@@ -86,26 +86,26 @@ namespace RPGenius
             {
                 target.StatChanges.Remove(original);
                 target.StatChangeDurations.RemoveAt(index);
-                Console.WriteLine("{0}'s {1} is back to normal", target.Name, _name);
+                Console.WriteLine("> {0}'s {1} is back to normal", target.Name, _name);
                 return 1;
             }
             if (original.ChangePercentage < this.ChangePercentage)  // if the new one is more powerful, it overwrites the old one
             {
                 target.StatChanges[index] = this;
                 target.StatChangeDurations[index] = _duration;
-                if (IsPositive) { Console.WriteLine("{0}'s {1} has been increased", target.Name, _name); }
-                else { Console.WriteLine("{0}'s {1} has been lowered", target.Name, _name); }
+                if (IsPositive) { Console.WriteLine("> {0}'s {1} has been increased", target.Name, _name); }
+                else { Console.WriteLine("> {0}'s {1} has been lowered", target.Name, _name); }
                 return 0;
             }
             if (original.ChangePercentage == this.ChangePercentage)     //if they are of equal strength, the original effect is extended by the duration of the new effect
             {
                 target.StatChangeDurations[index] += _duration;
-                Console.WriteLine("{0}'s {1} change has been extended", target.Name, _name);
+                Console.WriteLine("> {0}'s {1} change has been extended", target.Name, _name);
                 return 1;
             }
             //else   - if the new one is weaker than the old one, the effect is extended by one turn
             target.StatChangeDurations[index] += 1;
-            Console.WriteLine("It was not very effective on {0}", target.Name);
+            Console.WriteLine("> It was not very effective on {0}", target.Name);
             return 1;
         }
         /// <summary>
@@ -116,11 +116,11 @@ namespace RPGenius
         {
             target.StatChanges.Add(this);
             target.StatChangeDurations.Add(_duration);
-            if (IsPositive) { Console.WriteLine("{0}'s {1} has been increased", target.Name, _name); }
-            else { Console.WriteLine("{0}'s {1} has been lowered", target.Name, _name); }
+            if (IsPositive) { Console.WriteLine("> {0}'s {1} has been increased", target.Name, _name); }
+            else { Console.WriteLine("> {0}'s {1} has been lowered", target.Name, _name); }
         }
         /// <summary>
-        /// Does necessary handling for a StatChange that has just been applied. Namely, the altering of stats
+        /// Does necessary handling for a StatChange that has just been applied. Namely, the original altering of stats and storage of difference
         /// </summary>
         /// <param name="target">Entity that possess the StatChange</param>
         protected abstract void FirstTimeHandle(Entity target);
@@ -145,9 +145,9 @@ namespace RPGenius
         /// <param name="index">The position of the StatChange in the target.StatChanges list</param>
         protected virtual void Restore(Entity target, int index)
         {
-            Console.WriteLine("{0}'s {1} has reverted", target.Name, _name);
+            Console.WriteLine("> {0}'s {1} has reverted", target.Name, _name);
             target.StatChanges.Remove(this);
-            target.StatChanges.RemoveAt(index);
+            target.StatChangeDurations.RemoveAt(index);
         }
         /// <summary>
         /// Returns a string representing the StatChange the target has

@@ -100,7 +100,8 @@ namespace RPGenius
                 } while (choice == 0);
             }
             if (Effect != null) { Effect.Handle(this, 3); }
-            foreach (IEffectOrBuff s in StatChanges) { s.Handle(this, 3); }
+            List<IEffectOrBuff> toIterate = StatChanges.ToList();    //this allows for statchange.handle to remove statchange onjects from entity.statchanges, without affecting the list the loop iterates on
+            foreach (IEffectOrBuff s in toIterate) { s.Handle(this, 3); }
             HaveTurnLater = false;
             CanUseTurn = true;
             Afraid = false;

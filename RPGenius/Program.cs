@@ -25,7 +25,6 @@ namespace RPGenius
             SupportSkill moderateAtkDown = new SupportSkill("Weakening", SkillTarget.TargetOneEnemy, 10, EffectKind.ATK, 100, 3, EffectSeverity.moderate, false);
             SupportSkill defDownAll = new SupportSkill("Mass armour break", SkillTarget.TargetAllEnemies, 15, EffectKind.DEF, 100, 3, EffectSeverity.moderate, false);
 
-
             Player testMan = new Player("Jack", 3, 1500, 12, 7, 500, 10, 13);
             Player testMan2 = new Player("Dan", 2, 1600, 11, 8, 650, 15, 14);
             //Player testMan3 = new Player("Rory", 3, 150, 12, 7, 50, 10, 13);
@@ -38,6 +37,7 @@ namespace RPGenius
             battle.AddEntity(goblin1);
             battle.AddEntity(goblin2);
             battle.AddEntity(goblinLeader);
+
             foreach (KeyValuePair<Entity, int> e in battle.EntityReg)
             {
                 e.Key.Weapon = ironSword;
@@ -54,6 +54,8 @@ namespace RPGenius
                 e.Key.Skills.Add(atkDownAll);
                 e.Key.Skills.Add(defDownAll);
             }
+
+
             battle.Start();
         }
     }
